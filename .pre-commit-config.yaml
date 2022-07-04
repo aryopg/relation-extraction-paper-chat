@@ -1,0 +1,14 @@
+default_language_version:
+  python: python3.9
+repos:
+  - repo: https://github.com/ambv/black
+    rev: 22.6.0
+    hooks:
+      - id: black
+        language_version: python3.9
+        name: black_manual
+        stages: [manual]
+      - id: black
+        language_version: python3.9
+        stages: [commit]
+        entry: bash -c 'black "$@"; git add -u' --
