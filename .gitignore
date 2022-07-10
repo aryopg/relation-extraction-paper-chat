@@ -2,3 +2,12 @@ __pycache__/
 
 .DS_Store
 .vcscode/
+.ipynb_checkpoints
+
+# Model
+md_ner_classifier/
+md_re_classifier.pickle
+sm_re_classifier.pickle
+
+# Results
+publications_list.csv
