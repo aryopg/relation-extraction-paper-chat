@@ -5,7 +5,10 @@ __pycache__/
 .ipynb_checkpoints
 
 # Model
+lg_ner_classifier_90/
+lg_ner_classifier/
 md_ner_classifier/
+lg_re_classifier.pickle
 md_re_classifier.pickle
 sm_re_classifier.pickle
 

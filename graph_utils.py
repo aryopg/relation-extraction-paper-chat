@@ -5,22 +5,17 @@ driver = GraphDatabase.driver(uri, auth=("neo4j", "password"))
 
 
 def create_node(tx, name, entity_type):
-    print(f"{name}: {entity_type}")
     tx.run(
-        "MERGE (a:" + entity_type + " {name: $name, label: $label})",
+        f"MERGE (a:{entity_type} {{name: $name}})",
         name=name.lower().strip(),
-        label=entity_type.lower().strip(),
     )
 
 
 def create_relation(tx, subject, object, relation_type):
     tx.run(
-        "MATCH (a:" + subject[1] + ") WHERE a.name = $subject_name "
-        "CREATE (a)-[:"
-        + relation_type.upper().strip()
-        + "]->(:"
-        + object[1]
-        + " {name: $object_name})",
+        f"MATCH (a:{subject[1]}) WHERE a.name = $subject_name "
+        f"MATCH (b:{object[1]}) WHERE b.name = $object_name "
+        f"MERGE (a)-[:{relation_type.upper().strip()}]->(b)",
         subject_name=subject[0].lower().strip(),
         object_name=object[0].lower().strip(),
     )

@@ -3,10 +3,10 @@ import pickle
 import spacy
 
 ner_nlp = spacy.load(
-    "/Users/aryopg/Documents/learning/relation-extraction-paper-chat/md_ner_classifier"
+    "/Users/aryopg/Documents/learning/relation-extraction-paper-chat/lg_ner_classifier"
 )
 
-with open("md_re_classifier.pickle", "rb") as model_file:
+with open("lg_re_classifier.pickle", "rb") as model_file:
     re_model = pickle.load(model_file)
 
 

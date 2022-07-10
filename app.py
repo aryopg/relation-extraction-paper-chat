@@ -1,5 +1,5 @@
 import streamlit as st
-from pubmed_utils import download_pubmed_by_pmid
+from pubmed_utils import download_pubmed_by_pmid, get_publications_list
 from relation_extraction_utils import (
     named_entity_recognition_predict,
     relation_extraction_predict,
@@ -35,32 +35,46 @@ options = {"ents": entities, "colors": colors}
 
 def main():
     st.title("Knowledge Base from Biomedical Literature")
-    input_pmid = st.text_input("Enter PMID", placeholder="Type Here (Ex: 29630008)")
-    my_bar = st.progress(0)
-    if st.button("Analyze"):
-        my_bar.progress(0)
 
-        publication = download_pubmed_by_pmid(input_pmid, save_to_csv=False)
-        my_bar.progress(20)
+    col1, col2 = st.columns(2)
 
-        doc = named_entity_recognition_predict(
-            str(publication.title) + "\n" + str(publication.abstract)
-        )
-        my_bar.progress(50)
+    with col1:
+        st.header("Insert PMID to include a publication to the DB")
+        input_pmid = st.text_input("Enter PMID", placeholder="Type Here (Ex: 29630008)")
+        my_bar = st.progress(0)
+        if st.button("Analyze"):
+            my_bar.progress(0)
 
-        relations = relation_extraction_predict(doc)
-        print(relations)
-        my_bar.progress(75)
+            publication = download_pubmed_by_pmid(input_pmid)
+            my_bar.progress(20)
 
-        update_database(relations)
-        st.success("DB is updated!")
-        my_bar.progress(90)
+            doc = named_entity_recognition_predict(
+                str(publication.title) + "\n" + str(publication.abstract)
+            )
+            my_bar.progress(50)
 
-        html = displacy.render(doc, style="ent", options=options)
-        html = html.replace("\n\n", "\n")
-        my_bar.progress(100)
-        st.header(f"Title: {str(publication.title)}")
-        st.write(HTML_WRAPPER.format(html), unsafe_allow_html=True)
+            relations = relation_extraction_predict(doc)
+            my_bar.progress(75)
+
+            update_database(relations)
+            success_message = f"Found {len(relations)} relations. \n"
+            success_message += (
+                "New nodes and edges are added to the DB!"
+                if len(relations)
+                else "No new nodes and edges added to the DB"
+            )
+            st.success(success_message)
+            my_bar.progress(90)
+
+            html = displacy.render(doc, style="ent", options=options)
+            html = html.replace("\n\n", "\n")
+            my_bar.progress(100)
+            st.header(f"Title: {str(publication.title)}")
+            st.write(HTML_WRAPPER.format(html), unsafe_allow_html=True)
+    with col2:
+        st.header("Last 10 processed publications")
+        df = get_publications_list(num_publications=10)
+        st.table(df)
 
 
 if __name__ == "__main__":

@@ -29,7 +29,6 @@ class Publication:
                 "abstract": [self.abstract],
                 "completed_year": [self.completed_year],
                 "added_at": [datetime.now()],
-                "is_extracted": [False],
             }
         )
         df.to_csv(csv_path, mode="a", header=not os.path.exists(csv_path))
@@ -61,10 +60,12 @@ def download_pubmed_by_pmid(pmid: str, save_to_csv: bool = True) -> Publication:
 
 
 def get_publications_list(num_publications: Optional[int] = None) -> pd.DataFrame:
-    publications_list = pd.read_csv(GLOBAL_CSV_PATH)
-    publications_list.sort_values(by="created_at", ascending=False)
+    publications_list = pd.read_csv(GLOBAL_CSV_PATH, index_col=0)
+    publications_list["added_at"] = pd.to_datetime(publications_list["added_at"])
+    publications_list = publications_list.sort_values(by="added_at", ascending=False)
+    publications_list = publications_list.set_index("pmid")
 
     if num_publications:
-        return publications_list.head(num_publications)
+        return publications_list[["title", "added_at"]].head(num_publications)
     else:
-        return publications_list
+        return publications_list[["title", "added_at"]]
