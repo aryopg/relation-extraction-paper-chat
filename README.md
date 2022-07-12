@@ -1,12 +1,18 @@
-# Relation Extraction Paper Chat Demo
+# [Work in Progress] Relation Extraction Paper Chat Demo
 
-Relation Extraction Demo for Epigene Labs' paper chat July 8th, 2022
+Relation Extraction Demo for Epigene Labs' paper chat July 12th, 2022
 
 
-## Note:
+## How to run:
 
 ```
+# Setup the environment
+pyenv shell 3.9.0
+poetry shell
+
+# Install dependencies
 poetry install
-# Install datasets separately
-pip install datasets=1.11.0
+
+# Run the app
+streamlit run app.py
 ```
